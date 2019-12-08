@@ -1,0 +1,96 @@
+function avatar=getprofile(avatar,opts)
+% Generates profile per user
+
+opts.domain = 'moodle.lan';
+
+% opts = detectImportOptions('Nomes.xls')
+Tsn = readtable('SobreNomes.csv','ReadVariableNames',false);
+Csn = table2cell(Tsn);
+SobreNomes=Csn(~cellfun('isempty',Csn));
+
+% NomesFemininos.csv
+Tnf = readtable('NomesFemininos.csv','ReadVariableNames',false);
+Cnf = table2cell(Tnf);
+NomesFemininos=Cnf(~cellfun('isempty',Cnf));
+
+% NomesMasculinos
+Tnm = readtable('NomesMasculinos.csv','ReadVariableNames',false);
+Cnm = table2cell(Tnm);
+NomesMasculinos=Cnm(~cellfun('isempty',Cnm));
+
+Tcd = readtable('Cidades.csv','ReadVariableNames',false,'Encoding','UTF-8');
+Cidades = table2cell(Tcd);
+
+ndpwd=12; % Digitos na senhas
+symbs=[35:38 64];
+vect = [symbs 48:57 64:90 97:122]; % from ascii table
+
+oldchars={'á','é','í','ó','ú','ç','ã','õ'};
+newchars={'a','e','i','o','u','c','a','o'};
+
+
+for x=1:length(avatar)
+    senha=[ vect(randperm(length(vect),ndpwd-1)) symbs(randperm(length(symbs),1)) ];
+    avatar{x}.username = avatar{x}.id;
+    avatar{x}.password = char(senha(randperm(length(senha))));
+    avatar{x}.lastname = SobreNomes{randi(length(SobreNomes))};
+    
+    switch avatar{x}.opts.genero        
+        case 'F' % Feminino
+           avatar{x}.firstname = NomesFemininos{randi(length(NomesFemininos))};
+            
+        case 'M' % Masculino
+           avatar{x}.firstname = NomesMasculinos{randi(length(NomesMasculinos))}; 
+    end
+    
+    
+                           strn = regexprep(lower([avatar{x}.firstname avatar{x}.lastname]),oldchars,newchars);
+            avatar{x}.mailname = matlab.lang.makeValidName(strn,'ReplacementStyle','delete');
+            users{x,3} = [avatar{x}.mailname '@' moodle.lan];
+            
+end
+
+
+% username,password,firstname,lastname,email 'city','country',
+
+
+switch genero
+    case 'F' % Feminino
+        for x=1:length(idx)
+            users{x,1} = ['f' idx{x}];
+            senha=[ vect(randperm(length(vect),ndpwd-1)) symbs(randperm(length(symbs),1)) ];
+            users{x,2} = char(senha(randperm(length(senha))));
+            
+            users{x,4} = NomesFemininos{randi(length(NomesFemininos))};
+            users{x,5} = SobreNomes{randi(length(SobreNomes))};
+            strn = regexprep(lower([users{x,4} users{x,5}]),oldchars,newchars);
+            mailname = matlab.lang.makeValidName(strn,'ReplacementStyle','delete');
+            users{x,3} = [mailname '@moodle.lan'];
+            users{x,6} = Cidades{randi(length(Cidades))};
+            users{x,7} = 'BR';
+            users{x,8} = ['T' num2str(ceil(x/nalunospturma),'%02i')];
+            copyfile(['f' idx{x} '.png'],['avatars/f' idx{x} '.png']) % Copia arquivo
+        end
+        Tusr = cell2table(users,'VariableNames',header);
+        writetable(Tusr,'avatars/FUsers.csv','Delimiter',';','WriteRowNames',true,'Encoding','UTF-8')
+        
+    case 'M' % Masculino
+        for x=1:length(idx)
+            users{x,1} = ['m' idx{x}];
+            senha=[ vect(randperm(length(vect),ndpwd-1)) symbs(randperm(length(symbs),1)) ];
+            users{x,2} = char(senha(randperm(length(senha))));
+            users{x,4} = NomesMasculinos{randi(length(NomesMasculinos))};
+            users{x,5} = SobreNomes{randi(length(SobreNomes))};
+            strn = regexprep(lower([users{x,4} users{x,5}]),oldchars,newchars);
+            mailname = matlab.lang.makeValidName(strn,'ReplacementStyle','delete');
+            users{x,3} = [mailname '@moodle.lan'];
+            users{x,6} = Cidades{randi(length(Cidades))};
+            users{x,7} = 'BR';
+            users{x,8} = ['T' num2str(ceil(x/nalunospturma),'%02i')];
+            copyfile(['m' idx{x} '.png'],['avatars/m' idx{x} '.png']) % Copia arquivo
+        end
+        Tusr = cell2table(users,'VariableNames',header);
+        writetable(Tusr,'avatars/MUsers.csv','Delimiter',';','WriteRowNames',true,'Encoding','UTF-8')        
+end
+
+
