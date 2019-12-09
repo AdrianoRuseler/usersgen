@@ -1,9 +1,23 @@
 function avatar=getavatar(opts)
 
 % opts.genero = genero;
-opts.format = 'png';
-opts.width = '100'; % png only
-opts.filedir = [pwd '\avatars'];
+
+if ~isfield(opts,'genero')
+    generos={'M','F'};
+    opts.genero = generos{randi(2)};
+end
+
+if ~isfield(opts,'format')
+    opts.format = 'png';
+end
+
+if ~isfield(opts,'width')
+    opts.width = '100'; % png only
+end
+
+if ~isfield(opts,'filedir')
+    opts.filedir = [pwd '\avatars'];
+end
 
 if ~exist(opts.filedir,'dir')
     mkdir(opts.filedir)
