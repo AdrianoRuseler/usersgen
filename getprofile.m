@@ -1,7 +1,11 @@
 function avatar=getprofile(avatar,opts)
 % Generates profile per user
 
-opts.domain = 'moodle.lan';
+
+if ~isfield(opts,'domain')
+    opts.domain = 'moodle.email';
+end
+
 
 % opts = detectImportOptions('Nomes.xls')
 Tsn = readtable('SobreNomes.csv','ReadVariableNames',false);
