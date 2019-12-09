@@ -1,10 +1,22 @@
 function users=exportavatar(avatar,opts)
 
-opts.cvsfile=[pwd '\moodleimport.csv'];
-opts.wikifile=[pwd '\wikitable.txt'];
-opts.keepassfile=[pwd '\keepass.csv'];
-opts.site = 'https://nupet.adrianoruseler.com';
-opts.cohortnusr = 2; % Members per cohort
+if ~isfield(opts,'site')
+    opts.site = 'https://nupet.adrianoruseler.com';
+end
+
+if ~isfield(opts,'cohortnusr')
+    opts.cohortnusr = 5; % Members per cohort
+end
+
+if ~isfield(opts,'filedir')
+    opts.filedir = pwd; % Members per cohort
+end
+
+
+
+opts.cvsfile=[opts.filedir '\moodleimport.csv'];
+opts.wikifile=[opts.filedir '\wikitable.txt'];
+opts.keepassfile=[opts.filedir '\keepass.csv'];
 
 
 header={'username','password','email','firstname','lastname','city','country','cohort1'};           
